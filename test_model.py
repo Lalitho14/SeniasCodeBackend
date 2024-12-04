@@ -144,7 +144,7 @@ def EvaluarModelo(src=None, threshold=0.1, margin_frame=1, delay_frames=3):
             word_id = word_ids[np.argmax(res)].split('-')[0]
             
             print(f"Palabra detectada : {word_id}")
-            return "Palabra detectada : " + word_id
+            return word_id
           
           else:
             return "No se deteccto frase"

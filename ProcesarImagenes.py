@@ -5,6 +5,7 @@ from procesar_imagen import ProcesarImagen
 from inference_rest import PrediccionLetraServer
 from test_model import EvaluarModelo
 import os
+import time
 
 VIDEO_CACHE = 'uploaded_video'
 os.makedirs(VIDEO_CACHE, exist_ok=True)
@@ -20,9 +21,12 @@ def upload():
     f.write(base64.b64decode(image_data))
     
   ProcesarImagen('captured_fram.jpg')
-  letra = PrediccionLetraServer()
   
-  return "Imagen recibida "+letra, 200
+  time.sleep(0.5)
+  letra = PrediccionLetraServer()
+  time.sleep(0.5)
+  
+  return letra, 200
 
 @app.route('/upload_video', methods=['POST'])
 def upload_video():
@@ -40,7 +44,7 @@ def upload_video():
   
   frase = EvaluarModelo(src=filepath)
   
-  return "Se guardo video en server. "+frase, 200
+  return frase, 200
 
 if __name__ == '__main__':
   app.run(host='0.0.0.0', port=5000)
