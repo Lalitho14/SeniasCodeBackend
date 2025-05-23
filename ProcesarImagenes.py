@@ -3,7 +3,8 @@ import base64
 from flask_cors import CORS
 from procesar_imagen import ProcesarImagen
 from inference_rest import PrediccionLetraServer
-from test_model import EvaluarModelo
+#from test_model import EvaluarModelo
+from test_model_ import EvaluarModelo
 import os
 import time
 
