@@ -166,6 +166,7 @@ def EvaluarModelo(src=None, threshold=0.1, margin_frame=1, delay_frames=3):
     video.release()
     cv2.destroyAllWindows()
     
-# if __name__ == "__main__":
+if __name__ == "__main__":
+  EvaluarModelo();
 # #   EvaluarModelo(src="./uploaded_video/video.webm")
 #   EvaluarModelo(src="./uploaded_video/video.webm")

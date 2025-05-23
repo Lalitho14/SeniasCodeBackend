@@ -1,11 +1,12 @@
 import os
 import cv2
 import numpy as np
+import mediapipe as mp
 from mediapipe.python.solutions.holistic import Holistic, FACEMESH_CONTOURS, POSE_CONNECTIONS, HAND_CONNECTIONS
 from mediapipe.python.solutions.drawing_utils import draw_landmarks, DrawingSpec
 from keras.models import load_model
 from tensorflow.keras.preprocessing.sequence import pad_sequences
-from extrae_datos import ProcesarFrame
+from extrae_datos import ExtractorDatos
 import json
 
 
@@ -49,7 +50,7 @@ def InterpolateKeypoints(keypoints, target_length=15):
       interpolated_keypoints.append(keypoints[lower_idx])
     else:
       interpolated_point = (
-        1 - weight) * np.array(keypoints[lower_idx]) + weight * np.array(keypoints[upper_idx])
+          1 - weight) * np.array(keypoints[lower_idx]) + weight * np.array(keypoints[upper_idx])
       interpolated_keypoints.append(interpolated_point.tolist())
 
   return interpolated_keypoints
@@ -128,7 +129,7 @@ def EvaluarModelo(src=None, threshold=0.1, margin_frame=1, delay_frames=3):
         capturando = False
         count_frame += 1
         if count_frame > margin_frame:
-          kp_frame = ProcesarFrame(frame)
+          kp_frame = extractor_data.ProcesarFrame(frame)
           kp_seq.append(kp_frame)
 
       else:
@@ -146,10 +147,6 @@ def EvaluarModelo(src=None, threshold=0.1, margin_frame=1, delay_frames=3):
             word_id = word_ids[np.argmax(res)].split('-')[0]
 
             print(f"Palabra detectada : {word_id}")
-            return word_id
-
-          else:
-            return "No se deteccto frase"
 
         capturando = False
         fix_frames = 0
@@ -171,4 +168,16 @@ def EvaluarModelo(src=None, threshold=0.1, margin_frame=1, delay_frames=3):
 
 
 if __name__ == "__main__":
-  EvaluarModelo(src="./testvideo.mp4")
+  mp_holistic = mp.solutions.holistic
+  holistic = mp_holistic.Holistic(
+    static_image_mode=True,
+    model_complexity=2,            # 0 (ligero), 1 (medio), 2 (completo)
+    smooth_landmarks=True,
+    refine_face_landmarks=True     # Más precisión en rostro
+  )
+
+  extractor_data = ExtractorDatos(holistic, mp_holistic)
+
+  #EvaluarModelo(src="./video2.webm")
+  EvaluarModelo(src="./uploaded_video/video2.webm")
+  # EvaluarModelo(src=0, threshold=0.5)
