@@ -115,6 +115,16 @@ def EvaluarModelo(src=None, threshold=0.1, margin_frame=1, delay_frames=3):
   fix_frames = 0
   capturando = False
 
+  mp_holistic = mp.solutions.holistic
+  holistic = mp_holistic.Holistic(
+    static_image_mode=True,
+    model_complexity=2,            # 0 (ligero), 1 (medio), 2 (completo)
+    smooth_landmarks=True,
+    refine_face_landmarks=True     # Más precisión en rostro
+  )
+
+  extractor_data = ExtractorDatos(holistic, mp_holistic)
+
   with Holistic() as holistic_model:
     video = cv2.VideoCapture(src)
 
@@ -147,11 +157,14 @@ def EvaluarModelo(src=None, threshold=0.1, margin_frame=1, delay_frames=3):
             word_id = word_ids[np.argmax(res)].split('-')[0]
 
             print(f"Palabra detectada : {word_id}")
+            return word_id
 
         capturando = False
         fix_frames = 0
         count_frame = 0
         kp_seq = []
+      
+      return 'No se detecto palabra'
 
       if not src:
         cv2.rectangle(frame, (0, 0), (640, 35), (245, 117, 16), -1)
@@ -178,6 +191,6 @@ if __name__ == "__main__":
 
   extractor_data = ExtractorDatos(holistic, mp_holistic)
 
-  #EvaluarModelo(src="./video2.webm")
+  # EvaluarModelo(src="./video2.webm")
   EvaluarModelo(src="./uploaded_video/video2.webm")
   # EvaluarModelo(src=0, threshold=0.5)
